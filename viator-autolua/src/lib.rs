@@ -143,7 +143,7 @@ fn gen_from_lua(target: &StructInfo) -> anyhow::Result<TokStream> {
     }).collect::<TokStream>();
 
     let implementation: TokStream = quote! {
-        impl FromLua for #name {
+        impl mlua::FromLua for #name {
             fn from_lua(value: mlua::Value, lua: &Lua) -> mlua::Result<Self> {
                 return match value {
                     mlua::Value::Table(table) => {
@@ -156,7 +156,7 @@ fn gen_from_lua(target: &StructInfo) -> anyhow::Result<TokStream> {
                     }
 
                     _ => {
-                        Err(anyhow!("Unable to convert such value into {} struct", stringify!(#name)).into())
+                        Err(anyhow::anyhow!("Unable to convert such value into {} struct", stringify!(#name)).into())
                     }
                 }
             }
