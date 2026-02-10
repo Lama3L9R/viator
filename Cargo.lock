@@ -544,23 +544,29 @@ dependencies = [
  "serde",
  "serde_json",
  "tokio",
- "viator_autolua",
- "viator_utils",
+ "viator-autolua",
+ "viator-utils",
 ]
 
 [[package]]
-name = "viator_autolua"
+name = "viator-autolua"
 version = "0.1.0"
 dependencies = [
  "anyhow",
  "proc-macro2",
  "quote",
  "syn",
+ "viator-utils",
 ]
 
 [[package]]
-name = "viator_utils"
+name = "viator-utils"
 version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "hashbrown",
+ "mlua",
+]
 
 [[package]]
 name = "windows-link"
