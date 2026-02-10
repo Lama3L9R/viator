@@ -1,40 +1,12 @@
+mod analyze;
+
 use proc_macro::TokenStream;
-use anyhow::anyhow;
-use quote::{quote, ToTokens};
-use syn::{parse_macro_input, Fields, Ident, ItemStruct, Meta, Token, Type};
+use quote::{quote};
+use syn::{parse_macro_input, Ident, ItemStruct, Token};
 use syn::parse::{Parse, ParseStream};
+use crate::analyze::{transform_struct, StructInfo};
 
 type TokStream = proc_macro2::TokenStream;
-
-macro_rules! field_has_attr {
-    ($field: ident, $text: literal) => {
-        $field.attrs.iter().any(|x| {
-            if let Meta::Path(path) = &x.meta {
-                return path.is_ident("skip")
-            }
-
-            return false
-        })
-    };
-}
-
-macro_rules! drop_attr {
-    ($field: ident, $text: literal) => {
-        $field.attrs = $field.attrs.clone().into_iter().filter(|attr| {
-            if let Meta::Path(path) = &attr.meta {
-                !path.is_ident($text)
-            } else {
-                false
-            }
-        }).collect();
-    };
-}
-
-struct StructInfo<> {
-    stt: ItemStruct,
-    target_fields: Vec<Ident>,
-    skipped_fields: Vec<Ident>,
-}
 
 struct AutoLuaArgs {
     params: Vec<String>
@@ -81,7 +53,7 @@ impl Parse for AutoLuaArgs {
 /// - `From`: will generate FromLua implementation strictly from a Table type
 ///
 /// Note: if `#[skip]` is used on a field, the type of the field will
-/// be transformed into `viator_utils::MaybeValue<T>`,
+/// be transformed into `viator-utils::MaybeValue<T>`,
 /// which impl Deref, and will panic if null is being used / deref-ed.
 ///
 #[proc_macro_attribute]
@@ -145,50 +117,6 @@ fn gen_maybe_wrapper(ttype: TokenStream) -> TokStream {
     let ttype: TokStream = ttype.into();
 
     return quote! { viator_utils::maybe_value::MaybeValue<#ttype> };
-}
-
-fn transform_struct(mut target: ItemStruct) -> anyhow::Result<StructInfo> {
-    let input_fields = if let Fields::Named(named) = &mut target.fields {
-        named
-    } else {
-        return Err(anyhow!("Only full struct is supported!"))
-    };
-
-    let mut regular_fields: Vec<Ident> = Vec::new();
-    let mut skipped_fields: Vec<Ident> = Vec::new();
-
-    for field in &mut input_fields.named {
-        if field_has_attr!(field, "skip") {
-
-            // Add MaybeValue wrapper to original type
-            field.ty = Type::Verbatim(gen_maybe_wrapper(field.ty.clone().into_token_stream().into()));
-
-            // Drop processed attribute (which is undefined to rustc)
-            drop_attr!(field, "skip");
-            drop_attr!(field, "hidden_彩蛋哦");
-
-            // Random quote from quote.lama.icu
-            //
-            // English (Translated by Gemini 3 Fast):
-            //      This unfamiliar place is but a fragment of the scenery,
-            //      a fleeting station in the soul's long pilgrimage;
-            //      the road that lies ahead remains, as it ever was, an interrogation of the infinite.
-            //
-            // for whoever wish to include this in your prog:
-            // #[此一处陌生的地方_不过是心魂之旅中的一处景观_一次际遇_未来的路途一样还是无限之问]
-            drop_attr!(field, "此一处陌生的地方_不过是心魂之旅中的一处景观_一次际遇_未来的路途一样还是无限之问");
-
-            skipped_fields.push(field.ident.clone().unwrap());
-        } else {
-            regular_fields.push(field.ident.clone().unwrap());
-        }
-    }
-
-    return Ok(StructInfo {
-        stt: target,
-        target_fields: regular_fields,
-        skipped_fields
-    })
 }
 
 fn recreate_struct(target: &StructInfo) -> anyhow::Result<TokStream> {
