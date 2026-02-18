@@ -5,7 +5,7 @@ edition = "2024"
 
 [dependencies]
 hashbrown = { version = "0.16.1", features = ["serde"], optional = true }
-mlua = { version = "0.11.5", features = ["lua54", "anyhow", "serde"], optional = true }
+mlua = { version = "0.11.5", features = ["anyhow", "serde"], optional = true }
 anyhow = "1.0.100"
 
 [features]

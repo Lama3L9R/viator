@@ -8,6 +8,12 @@ pub struct Registry<T> {
 }
 
 impl<T> Registry<T> {
+    pub fn new() -> Self {
+        Self {
+            reg: HashMap::new(),
+        }
+    }
+
     pub fn register(&mut self, str: String, value: T) {
         self.reg.insert(str, Rc::new(Box::new(value)));
     }

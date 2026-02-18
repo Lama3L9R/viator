@@ -183,13 +183,12 @@ function checkCompiler()
 end
 
 return {
+    group = "icu.lama",
+    name = "example",
     envCheck = {
         checkCompiler
     },
     targets = {
-        release, debug, libraryDebug, libraryRelease
+        release, debug, libraryDebug, libraryRelease, publishViatorLocal
     },
-    publish = {
-
-    }
 }
