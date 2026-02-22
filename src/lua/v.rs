@@ -1,9 +1,34 @@
 
-use mlua::IntoLua;
-use autolua::bindlua;
+use mlua::{Error, FromLua, IntoLua, MultiValue, ObjectLike, UserDataFields, UserDataMethods};
+use autolua::{autolua, bindlua};
 use mlua::Lua;
-use mlua::prelude::LuaResult;
 use crate::build::StateHandle;
+
+bindlua! {
+    #[autolua(From)]
+    pub lua V2D {
+        lua x: u32
+        lua y: u32
+
+        lua operator fn add(v1: V2D) -> V2D {
+            return Ok(V2D {
+                x: this.x + v1.x,
+                y: this.y + v1.y,
+            })
+        }
+
+        lua static operator fn sub(v1: V2D, v2: V2D) -> V2D {
+            return Ok(V2D {
+                x: v1.x - v2.x,
+                y: v1.y - v2.y,
+            })
+        }
+
+        lua operator fn toString() -> String {
+            return Ok(format!("Vector2D [{}, {}]", this.x, this.y))
+        }
+    }
+}
 
 bindlua! {
     pub lua V {
@@ -21,14 +46,20 @@ bindlua! {
             }
         }
 
-        lua fn require() -> LuaResult<String> {
+        lua static fn newVector2D(x: u32, y: u32) -> V2D {
+            return Ok(V2D { x, y })
+        }
+
+        lua static fn require(pkg: String) -> String {
             println!("Alright");
 
             return Ok(String::from("hello"));
         }
 
-        lua fn depend() {
+        lua static fn depend(test: String) -> String {
+            println!("depend: {}", test);
 
+            return Ok(format!("こんばんは {}", test));
         }
 
         lua fn dependDyn() {

@@ -8,10 +8,9 @@ pub mod dep;
 
 #[autolua(Into, From)]
 pub struct ViatorFile {
-    ///
-    /// Name of the project
-    ///
+    pub namespace: String,
     pub name: String,
-    pub envCheck: Vec<Function>,
+    pub version: String,
+    pub envCheck: Option<Vec<Function>>,
     pub targets: Vec<Target>,
 }

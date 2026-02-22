@@ -55,10 +55,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
         Some(Commands::ExecuteLua { code, env }) => {
             if *env {
-                state.exec_lua_code(code.into());
+                state.exec_lua_code(code.into()).inspect_err(|err| println!("{}", err));
             } else {
                 let env = Lua::new();
-                env.load(code).eval::<()>();
+                env.load(code).eval::<()>().inspect_err(|err| println!("{}", err));
             }
         }
         Some(Commands::Version) => {

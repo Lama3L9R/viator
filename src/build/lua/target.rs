@@ -1,5 +1,6 @@
 use autolua::autolua;
-use mlua::Function;
+use mlua::{FromLua, Function, IntoLua, Lua};
+use crate::build::{BuildContext, StateHandle, ViatorState};
 use crate::build::lua::action::ConfigBoundAction;
 use crate::build::lua::dep::DependencyDesc;
 
@@ -18,4 +19,16 @@ pub struct Target {
     pub debug: Option<bool>,
     pub optimization: Option<u8>,
     pub sanitizers: Option<SanitizerSettings>
+}
+
+impl Target {
+    pub fn run(&self, state: &ViatorState, ctx: BuildContext) -> anyhow::Result<BuildContext> {
+        let val = ctx.into_lua(state.lua())?;
+
+        for act in &self.pipeline {
+            act.invoke(&val)?;
+        }
+
+        Ok(BuildContext::from_lua(val, state.lua())?)
+    }
 }

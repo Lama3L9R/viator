@@ -73,3 +73,9 @@ impl <K: IntoLua + Eq + Hash + Clone, V: IntoLua + Clone> IntoLua for HashbrownM
         Ok(LuaValue::Table(tbl))
     }
 }
+
+impl <K: Eq + Hash, V: Eq + Hash> Default for HashbrownMap<K, V> {
+    fn default() -> Self {
+        HashbrownMap::new()
+    }
+}

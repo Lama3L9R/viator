@@ -1,6 +1,9 @@
 use std::fs::read_to_string;
 use std::path::PathBuf;
-use mlua::{Lua, Value};
+use anyhow::anyhow;
+use autolua::autolua;
+use mlua::{FromLua, Lua, Value};
+use viator_utils::lua::hashbrown::HashbrownMap;
 use crate::build::lua::ViatorFile;
 use crate::build::registry::Registry;
 use crate::CliArgs;
@@ -10,6 +13,20 @@ use crate::build::lua::action::Action;
 
 pub mod registry;
 pub mod lua;
+
+#[autolua(Into, From)]
+pub struct BuildContext {
+    pub files: HashbrownMap<String, Value>,
+
+}
+
+impl BuildContext {
+    fn new() -> BuildContext {
+        BuildContext {
+            files: HashbrownMap::new(),
+        }
+    }
+}
 
 pub struct ViatorState {
     pub cli_args: CliArgs,
@@ -54,15 +71,35 @@ impl ViatorState {
     ///
     /// Loads a Viator file, where the return value will be parsed into ViatorFile
     ///
-    pub fn load_script(&self, path: PathBuf) {
+    pub fn load_script(&mut self, path: PathBuf) -> anyhow::Result<()> {
+        let result = ViatorFile::from_lua(self.exec_lua(path)?, &self.lua)?;
 
+        self.viator_file = Some(RBox::new(result));
+
+        return Ok(());
     }
 
     ///
     /// Run a pipeline described by the given ViatorFile
     ///
-    pub fn execute_pipeline() {
+    pub fn execute_pipeline(&self, name: String) -> anyhow::Result<BuildContext> {
+        let context = BuildContext::new();
 
+        if self.viator_file.is_none() {
+            return Err(anyhow!("Viator file not yet loaded"))
+        }
+
+        let target = self.viator_file.as_ref().unwrap().targets.iter().find(|it| {
+            it.name == name
+        });
+
+        if let None = target {
+            return Err(anyhow!("Target not found"))
+        }
+
+        let final_ctx = target.unwrap().run(self, context)?;
+
+        return Ok(final_ctx);
     }
 
     ///
@@ -86,4 +123,9 @@ impl ViatorState {
             ver
         }
     }
+
+    ///
+    /// Get lua as a ref of vm handle
+    ///
+    pub fn lua(&self) -> &Lua { &self.lua }
 }

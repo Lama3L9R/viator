@@ -62,9 +62,7 @@ checksum = "c08606f8c3cbf4ce6ec8e28fb0014a2c086708fe954eaa885384a6165172e7e8"
 
 [[package]]
 name = "autolua"
-version = "0.1.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fcd4389e2d265413663af5b9037e04819a8137cbc8dff6c1288416d1ff53d604"
+version = "0.2.1"
 dependencies = [
  "anyhow",
  "paste",
