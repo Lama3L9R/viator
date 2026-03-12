@@ -1,7 +1,8 @@
-
-use mlua::{Error, FromLua, IntoLua, MultiValue, ObjectLike, UserDataFields, UserDataMethods};
+use anyhow::anyhow;
+use mlua::{Error, FromLua, Function, IntoLua, MultiValue, ObjectLike, UserDataFields, UserDataMethods};
 use autolua::{autolua, bindlua};
 use mlua::Lua;
+use crate::build::lua::action::Action;
 use crate::build::StateHandle;
 
 bindlua! {
@@ -34,6 +35,7 @@ bindlua! {
     pub lua V {
         lua registry: VRegistry
         lua utils: VUtils
+        state: StateHandle
 
         pub fn attach(self, lua: &Lua) {
             lua.globals().set("V", self).expect("Failed to attach helper struct V to lua globals");
@@ -42,7 +44,8 @@ bindlua! {
         pub fn new(state: StateHandle) -> V {
             return V {
                 registry: VRegistry::new(state.clone()),
-                utils: VUtils::new(state),
+                utils: VUtils::new(state.clone()),
+                state,
             }
         }
 
@@ -70,8 +73,8 @@ bindlua! {
 
         }
 
-        lua fn action() {
-
+        lua fn action(id: String) -> Action {
+            return this.state.acts.get(&id).ok_or(anyhow!("Action does not exist").into());
         }
 
         lua fn linker() {
@@ -97,10 +100,16 @@ bindlua! {
 
     #[derive(Clone)]
     pub lua VRegistry {
+        state: StateHandle
+
         pub fn new(state: StateHandle) -> VRegistry {
             return VRegistry {
-
+                state
             }
+        }
+
+        lua fn action(name: String, act: Function) {
+            // this.state.acts.register(name, )
         }
     }
 

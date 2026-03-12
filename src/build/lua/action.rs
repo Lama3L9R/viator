@@ -1,7 +1,7 @@
 use autolua::autolua;
-use mlua::{Function, IntoLuaMulti, Lua, MultiValue, Value};
-use crate::build::{BuildContext, StateHandle};
+use mlua::{Function, MultiValue, Value};
 
+#[derive(Clone)]
 #[autolua(From, Into)]
 pub struct Action {
     pub name: String,
@@ -11,7 +11,7 @@ pub struct Action {
 #[autolua(From, Into)]
 pub struct ConfigBoundAction {
     pub name: Option<String>,
-    pub config: mlua::Value,
+    pub config: Value,
     pub act: Action
 }
 

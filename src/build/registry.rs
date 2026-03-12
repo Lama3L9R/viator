@@ -4,10 +4,10 @@ use std::rc::Rc;
 use hashbrown::HashMap;
 
 pub struct Registry<T> {
-    pub reg: HashMap<String, Rc<Box<T>>>,
+    pub reg: HashMap<String, T>,
 }
 
-impl<T> Registry<T> {
+impl<T: Clone> Registry<T> {
     pub fn new() -> Self {
         Self {
             reg: HashMap::new(),
@@ -15,10 +15,10 @@ impl<T> Registry<T> {
     }
 
     pub fn register(&mut self, str: String, value: T) {
-        self.reg.insert(str, Rc::new(Box::new(value)));
+        self.reg.insert(str, value);
     }
 
-    pub fn get(&self, str: &String) -> Option<Rc<Box<T>>> {
+    pub fn get(&self, str: &String) -> Option<T> {
         let val = self.reg.get(str);
 
         if val.is_none() {

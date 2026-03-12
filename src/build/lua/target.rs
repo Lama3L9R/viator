@@ -18,7 +18,10 @@ pub struct Target {
 
     pub debug: Option<bool>,
     pub optimization: Option<u8>,
-    pub sanitizers: Option<SanitizerSettings>
+    pub sanitizers: Option<SanitizerSettings>,
+
+    #[skip]
+    pub random_stuff: ViatorState
 }
 
 impl Target {
