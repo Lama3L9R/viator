@@ -4,13 +4,13 @@ use anyhow::anyhow;
 use autolua::autolua;
 use mlua::{FromLua, Lua, Value};
 use viator_utils::lua::hashbrown::HashbrownMap;
-use crate::build::lua::ViatorFile;
 use crate::build::registry::Registry;
 use crate::CliArgs;
 use crate::lua::v::V;
 use crate::utils::RBox;
 use crate::build::lua::action::Action;
 
+pub mod metadata;
 pub mod registry;
 pub mod lua;
 
@@ -68,6 +68,14 @@ impl ViatorState {
 
     }
 
+    ///
+    /// Loads a Viator file by automatically lookup 
+    ///
+    pub fn load_script_auto(&mut self) {
+
+
+    }
+    
     ///
     /// Loads a Viator file, where the return value will be parsed into ViatorFile
     ///

@@ -1,3 +1,8 @@
+-- @v:workspaces = master
+-- @v:minVersion = 1 
+-- fuck this line
+-- @v:fuck = fuck
+
 
 -- This is a design file that is used to
 -- Show how this program will be like

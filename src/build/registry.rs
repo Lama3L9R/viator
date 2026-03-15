@@ -1,6 +1,3 @@
-use std::boxed::Box;
-use std::rc::Rc;
-
 use hashbrown::HashMap;
 
 pub struct Registry<T> {

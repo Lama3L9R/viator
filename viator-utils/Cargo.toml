@@ -7,6 +7,7 @@ edition = "2024"
 hashbrown = { version = "0.16.1", features = ["serde"], optional = true }
 mlua = { version = "0.11.5", features = ["anyhow", "serde"], optional = true }
 anyhow = "1.0.100"
+cve-rs = "0.7.0"
 
 [features]
 hashbrown = ["dep:hashbrown"]

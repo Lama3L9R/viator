@@ -44,11 +44,15 @@ enum Commands {
 
     Crash
 }
+
+
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let state = ViatorState::create(CliArgs::parse())?;
 
     match &state.cli_args.command {
-        Some(Commands::Build { target }) => {}
+        Some(Commands::Build { target }) => {
+
+        }
         Some(Commands::Crash) => {
             let not_null = null_mut::<u8>();
             *not_null = 0;

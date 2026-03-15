@@ -1,6 +1,6 @@
 use autolua::autolua;
-use mlua::{FromLua, Function, IntoLua, Lua};
-use crate::build::{BuildContext, StateHandle, ViatorState};
+use mlua::{FromLua, Function, IntoLua};
+use crate::build::{BuildContext, ViatorState};
 use crate::build::lua::action::ConfigBoundAction;
 use crate::build::lua::dep::DependencyDesc;
 
@@ -19,9 +19,6 @@ pub struct Target {
     pub debug: Option<bool>,
     pub optimization: Option<u8>,
     pub sanitizers: Option<SanitizerSettings>,
-
-    #[skip]
-    pub random_stuff: ViatorState
 }
 
 impl Target {

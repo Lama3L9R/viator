@@ -7,7 +7,7 @@ pub mod action;
 pub mod dep;
 
 #[autolua(Into, From)]
-pub struct ViatorFile {
+pub struct ViatorFileLua {
     pub namespace: String,
     pub name: String,
     pub version: String,

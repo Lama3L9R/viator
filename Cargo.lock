@@ -63,6 +63,8 @@ checksum = "c08606f8c3cbf4ce6ec8e28fb0014a2c086708fe954eaa885384a6165172e7e8"
 [[package]]
 name = "autolua"
 version = "0.2.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2cffde4b117fa9442a3a24dc1ad8c4297ac6ca78b9be4e18bb97d96387869482"
 dependencies = [
  "anyhow",
  "paste",
@@ -957,6 +959,7 @@ name = "viator-utils"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "cve-rs",
  "hashbrown",
  "mlua",
 ]
