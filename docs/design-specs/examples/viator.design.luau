@@ -1,7 +1,8 @@
--- @v:workspaces = master
--- @v:minVersion = 1 
--- fuck this line
--- @v:fuck = fuck
+--!nocheck
+--@v:workspaces = master
+--@v:minVersion = 1
+--fuck this line
+--@v:fuck = fuck
 
 
 -- This is a design file that is used to
@@ -190,8 +191,10 @@ end
 return {
     group = "icu.lama",
     name = "example",
+    version = "1.0",
     envCheck = {
-        checkCompiler
+        checkCompiler,
+        V.requireCompiler("llvm", "ndk")
     },
     targets = {
         release, debug, libraryDebug, libraryRelease, publishViatorLocal

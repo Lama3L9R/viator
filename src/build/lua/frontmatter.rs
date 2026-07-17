@@ -1,9 +1,9 @@
-use std::{fmt::Display, fs::File, io::{BufRead, BufReader}, path::PathBuf};
-
+use std::{fs::File, io::{BufRead, BufReader}, path::PathBuf};
 use anyhow::anyhow;
+use mlua::FromLua;
 use viator_utils::{array::ArrayUnwrapMany, lua::hashbrown::HashbrownMap, string::StringLifeHacks};
 
-use crate::build::{lua::ViatorFileLua};
+use crate::build::{lua::ViatorFileLua, StateHandle, ViatorState};
 
 #[derive(Clone, Debug)]
 pub enum WorkspaceType {
@@ -94,12 +94,20 @@ impl Metadata {
     }
 }
 
-impl Display for Metadata {
-
-}
-
 pub struct ViatorFile {
     pub metadata: Metadata,
-    pub viator_file: Option<ViatorFileLua>
+    pub viator_file: ViatorFileLua
+}
+
+impl ViatorFile {
+    pub fn parse(state: &ViatorState, path: PathBuf) -> anyhow::Result<ViatorFile> {
+        let metadata = Metadata::parse(path.clone())?;
+        let lua = state.exec_lua(path)?;
+
+        return Ok(ViatorFile {
+            metadata,
+            viator_file: ViatorFileLua::from_lua(lua, state.lua())?
+        })
+    }
 }
 

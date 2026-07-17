@@ -2,6 +2,7 @@ mod lua;
 mod build;
 mod utils;
 mod logging;
+pub mod engine;
 
 mod built_info {
     include!(concat!(env!("OUT_DIR"), "/built.rs"));
@@ -57,14 +58,23 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             let not_null = null_mut::<u8>();
             *not_null = 0;
         }
+
         Some(Commands::ExecuteLua { code, env }) => {
-            if *env {
-                state.exec_lua_code(code.into()).inspect_err(|err| println!("{}", err));
+            let result = if *env {
+                state.exec_lua_code(code.into()).inspect_err(|err| println!("{}", err)).ok()
             } else {
                 let env = Lua::new();
-                env.load(code).eval::<()>().inspect_err(|err| println!("{}", err));
+
+                env.load(code).eval::<mlua::Value>().inspect_err(|err| println!("{}", err)).ok()
+            };
+
+            if let Some(result) = result {
+                println!("{:?}", result);
+            } else {
+                println!("nil");
             }
         }
+
         Some(Commands::Version) => {
             print!("Viator: {} ({}, {}", built_info::PKG_VERSION, built_info::RUSTC_VERSION, built_info::HOST);
             if built_info::GIT_DIRTY.is_none() || built_info::GIT_DIRTY.unwrap() {

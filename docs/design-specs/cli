@@ -1,0 +1,64 @@
+
+build
+    Execute default build target, if a target not specified, and it does not publish to repo,
+    unless you build "publish" target
+
+    Without workspaces:
+        $ viator build
+        $ viator build [target]+feat,feat2,feat3,armv9-support,example-arch-ext
+    With workspaces:
+        $ viator build :subproj
+        $ viator build :subproj:target
+
+    W/o interactive terminal: (w/o color)
+
+        [ Viator 1.0 ]  Building dummyTarget (step 1/9)
+            [7/16]      PrepareDependencies
+                FETCH     com.example:mylib:1.0
+                FETCH     com.google.js:v8:114.514
+                FETCH     my.cjson:cjson:3.2.1
+                FETCH     <toolchains:llvm:19>
+            [9/121]     CLangCompile
+                CC        main.c
+                CXX       js.cpp
+                CXX       engine.cpp
+                CXX       addon.cpp
+            [19/19]     CustomTask
+                GEN       random_data.o
+            [1/1]       LinkObjects
+                LINK      libExample.so
+            [1/1]       PublishRemote
+                Connecting to repo.viator.lama.icu
+
+
+mount
+    Mount a specific package variant to global/system scope so that it is available to all packages installed on host os
+
+    viator mount "pkg+variant"
+
+    Example:
+        $ sudo viator mount "icu.lama:helloworld:version+customFeature1+avx512"
+        mount helloworld 1.0 (variant AABBCCDDEE)
+          link  /usr/bin/helloworld -> ~/.viator/bin/.../helloworld
+          link  /usr/bin/meow -> ~/.viator/bin/.../meow
+        $ helloworld
+        world hello!
+
+    Interactive + custom path Example:
+        $ sudo viator mount "..." --at /usr/local --interactive
+        mount helloworld 1.0 (variant AABBCCDDEE)
+        File ~/.viator/bin/.../helloworld
+          (A)uto, (R)ename, (S)kip,
+          Action: R
+          Rename: hw
+        File ~/.viator/bin/.../meow
+          (A)uto, (R)ename, (S)kip,
+          Action: S
+
+
+          link  /usr/local/bin/hw -> ~/.viator/bin/.../helloworld
+          skip  ~/.viator/bin/.../meow
+        $ hw
+        world hello!
+        $ meow
+        meow: command not found

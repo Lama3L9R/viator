@@ -1,0 +1,28 @@
+
+Local Repository
+    ~/.viator
+        - repo
+            - com.example [Group Name]
+                - libexample [Package Name]
+                    - 1.0.0 [Version]
+                        - aabbccddeeff [Variant Hash]
+                            - metadata.json
+                            - libexample.so
+                            - libexample.a
+                            - headers
+        - viator.conf [Hocon Config for Viator Settings]
+
+Project Directory
+    - .viator/               [Cache and other stuff]
+        - .gitignore         [Ignore cache files]
+        - cache/             [Cache]
+        - dependency.lock    [Dependency lock file
+        - project.lock       [Avoid two viator instances running in the same project root]
+    - build/                 [Build dir]
+        - intermediates/     [Build intermediates]
+        - latest/            [Contains the last successful build results; symlink if possible; else copy]
+        - out/
+            - variant-hash/  [Contains the last build results of this variant]
+    - src/                   [Default Source Dir with headers mixed]
+    - ViatorFile
+    - viatorw                [Planned in V2, viator wrapper, just like gradlew]

@@ -5,6 +5,7 @@ use crate::build::lua::target::Target;
 pub mod target;
 pub mod action;
 pub mod dep;
+pub mod frontmatter;
 
 #[autolua(Into, From)]
 pub struct ViatorFileLua {

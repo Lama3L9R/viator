@@ -44,7 +44,7 @@ impl <K: Eq + Hash, V> From<hashbrown::HashMap<K, V>> for HashbrownMap<K, V> {
 
 impl <K: FromLua + Eq + Hash, V: FromLua> FromLua for HashbrownMap<K, V> {
     fn from_lua(value: LuaValue, _lua: &Lua) -> LuaResult<Self> {
-        if matches!(&value, LuaValue::Table(_)) {
+        if !matches!(&value, LuaValue::Table(_)) {
             return Err(anyhow!("Lua type mismatch! Expected Table to convert to HashbrownMap!").into())
         }
 

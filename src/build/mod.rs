@@ -9,10 +9,11 @@ use crate::CliArgs;
 use crate::lua::v::V;
 use crate::utils::RBox;
 use crate::build::lua::action::Action;
+use lua::frontmatter::ViatorFile;
 
-pub mod metadata;
 pub mod registry;
 pub mod lua;
+pub mod package;
 
 #[autolua(Into, From)]
 pub struct BuildContext {
@@ -80,7 +81,7 @@ impl ViatorState {
     /// Loads a Viator file, where the return value will be parsed into ViatorFile
     ///
     pub fn load_script(&mut self, path: PathBuf) -> anyhow::Result<()> {
-        let result = ViatorFile::from_lua(self.exec_lua(path)?, &self.lua)?;
+        let result = ViatorFile::parse(self, path)?;
 
         self.viator_file = Some(RBox::new(result));
 
@@ -97,7 +98,7 @@ impl ViatorState {
             return Err(anyhow!("Viator file not yet loaded"))
         }
 
-        let target = self.viator_file.as_ref().unwrap().targets.iter().find(|it| {
+        let target = self.viator_file.as_ref().unwrap().viator_file.targets.iter().find(|it| {
             it.name == name
         });
 

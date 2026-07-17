@@ -10,7 +10,7 @@ pub trait StringLifeHacks {
     fn trimpeek(&mut self, prefix: impl AsRef<str>) -> bool;
 
     ///
-    /// Split a string with java behaviour. Where T is the max length
+    /// Split a string with java behavior. Where T is the max length
     ///
     fn jsplit<const T: usize, D: AsRef<str>>(&self, delim: D) -> [Option<&str>; T];
 }
@@ -29,7 +29,7 @@ impl StringLifeHacks for String {
         let mut iter = self.split(delim.as_ref());
 
         let mut arr: [Option<&str>; T] = [0; T].map(|_| None);
-        
+
         for i in 0..T {
             arr[i] = iter.next();
         }
